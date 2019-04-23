@@ -5,23 +5,21 @@
 
 #define ALLOC_ARRAY2D(ARRAY,TYPE,DIM1,DIM2,INIT) \
 ({\
-    int *#ARRAY;\
-    #ARRAY = malloc(sizeof(TYPE*)*DIM1 + DIM1*DIM2*sizeof(TYPE));\
+    ARRAY = (TYPE **) malloc(sizeof(TYPE*)*DIM1 + DIM1*DIM2*sizeof(TYPE)); \
+    for (int p = 0; p < DIM1; p++) { \
+         ARRAY[p] = (TYPE*) (ARRAY + DIM1 + p * DIM2);\
+         for (int e = 0; e < DIM2; e++) {\
+                ARRAY[p][e] = INIT;\
+         }\
+    }\
 })
-    // for (int p = 0; p < DIM1; p++) { \
-    //     ARRAY[p] = ARRAY + DIM1 * sizeof(TYPE*) + p * (DIM2) * sizeof(TYPE);\
-    //     for (int e = 0; e < DIM2; e++) {\
-    //         *ARRAY[p][e] = INIT;\
-    //     }\
-    // }\
+
 
 
 int main(int argc, char const *argv[])
 {
-    
-    // ALLOC_ARRAY2D(test,int,3,4,100);
-
-    int *feld = malloc(sizeof(int*)*4 + 4*3*sizeof(int));
+    int **test;
+    ALLOC_ARRAY2D(test, int, 2, 5, (0xabcdef12));
 
     return 0;
 }
