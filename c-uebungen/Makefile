@@ -6,17 +6,17 @@ BUILD=${TARGET}/build
 BIN=${TARGET}/bin
 INCLUDE := ${SRC}/include
 
-_LDFLAGS=-I ./include -I ${INCLUDE} ${LDFLAGS}
-_CFLAGS=-g3 -Wall ${CFLAGS}
+_LDFLAGS=${LDFLAGS}
+_CFLAGS=-g3 -O0 -Wall
 
 _PROG := ${BIN}/${PROG}
-_SRC := $(wildcard ${BUILD}/${PROG}/*.c)
+_SRC := $(wildcard ${SRC}/${PROG}/*.c)
 
 
-_OBJ := $(patsubst ${BUILD}/${PROG}/%.c,${BUILD}/${PROG}/%.o,$(_SRC))
+_OBJ := $(patsubst ${SRC}/${PROG}/%.c,${BUILD}/${PROG}/%.o,$(_SRC))
 
 
-${BUILD}/%.o: ${build}/%.c
+${BUILD}/%.o: ${BUILD}/%.c
 	@echo "($< |  $@)"
 	${CC} ${_CFLAGS} -c $< -o $@ 
 
