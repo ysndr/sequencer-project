@@ -10,16 +10,18 @@ let
     else import <nixpkgs> {});
 in
 { pkgs ? pkgs' pinned, pinned ? null }:
+with pkgs;
 let 
 
+
 in
-pkgs.mkShell {
+mkShell {
   name = "betriebssysteme-c-env";
   buildInputs = with pkgs; [
     # put packages here.    
     gcc
     gnumake
-    gdb
+#   gdb
   ];
 
   shellHook = ''

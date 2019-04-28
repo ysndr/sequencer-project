@@ -4,7 +4,7 @@ TARGET=target
 
 BUILD=${TARGET}/build
 BIN=${TARGET}/bin
-INCLUDE := ${SRC}/include
+# INCLUDE := ${SRC}/include
 
 _LDFLAGS=${LDFLAGS}
 _CFLAGS=-g3 -O0 -Wall
@@ -36,10 +36,5 @@ prepare:
 
 # ${OUT}: ${SRCS}:
 # 	echo "srsc: ${SRCS}"
-all: prepare ${_PROG}
+build: prepare ${_PROG}
 	@echo ${_PROG}
-
-
-
-
-# ${BUILD}/${PROG}/$(basename $(notdir src/${PROG}))
