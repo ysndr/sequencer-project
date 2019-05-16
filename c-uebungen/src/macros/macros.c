@@ -1,4 +1,4 @@
-#include "include/macros.h"
+#include "../include/macros.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,10 +8,10 @@ int main(int argc, char const *argv[])
 {
     int **feld;
 
-    int dim1 = 4;
-    int dim2 = 5;
+    int dim1 = 3;
+    int dim2 = 4;
     ALLOC_ARRAY2D(feld, int, dim1, dim2, (0xabcdef12));
-
+    
 
     for (int i = 0; i < dim1; i++)
         for (int j = 0; j < dim1; j++)

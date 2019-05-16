@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "include/macros.h"
+#include "../include/macros.h"
 
 int main(int argc, char const *argv[])
 {

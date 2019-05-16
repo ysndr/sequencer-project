@@ -1,6 +1,8 @@
 #include "./double_linked_list.h"
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+
 
 
 /*initialize "shortcut links" for empty list*/
@@ -14,17 +16,28 @@ list_init(struct list_head *head)
 /*insert new entry after the specified head*/
 extern void
 list_add(struct list_head *new, struct list_head *head) {
+    if(head->prev == 0) { // is new and initialized w/ null
+        head->prev = head->next = new;
+    }
     new->next = head->next;    
     new->prev = head;
+    head->next->prev = new;
     head->next = new;
+
 }
 
 /*insert new entry before the specified head*/
 extern void
 list_add_tail(struct list_head *new, struct list_head *head) {
+    if(head->prev == 0) { // is new and initialized w/ null
+        head->prev = head->next = new;
+    }
+    
     new->prev = head->prev;    
     new->next = head;
+    head->prev->next = new;
     head->prev = new;
+    
 }
 
 
@@ -66,35 +79,56 @@ int main() {
     anchor = malloc(sizeof(struct list_head));
     list_init(anchor);
 
-    struct list_elem *e1, *e2, e3, e4, e5, e6;
-    e1 = malloc(sizeof(struct list_elem));
-    e1->pid = 1;
-    e2 = malloc(sizeof(struct list_elem));
-    e2->pid = 2;
-    e3.pid = 3;
-    e4.pid = 4;
-    e5.pid = 5;
-    e6.pid = 6;
+    struct list_elem e1, e2, e3, e4, e5, e6;
+    e1.pid = 0;
+    e2.pid = 1;
+    e3.pid = 2;
+    e4.pid = 3;
+    e5.pid = 4;
+    e6.pid = 5;
 
-    list_add(&e1->head, anchor);
-    list_add(&e2->head, anchor);
+    list_add(&e1.head, anchor);
+    list_add(&e2.head, anchor);
     list_add(&e3.head, anchor);
     list_add(&e4.head, anchor);
     list_add(&e5.head, anchor);
-    //list_add((struct list_head*) &e6, (struct list_head*) &e5);
+    list_add(&e6.head, anchor);
+    
+    
+    struct list_head *current = anchor->prev;
 
-    //list_add_tail((struct list_head*) &e6, (struct list_head*) &e3);
-
-    list_del(&e1->head);
-
-    struct list_head *current = anchor->next;
-
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         struct list_elem* elem= (struct list_elem*) current;
         printf("%d\n", elem->pid);
+        assert(elem->pid == i);
+        current = current->prev;
+    }
+
+    // back at anchor
+    struct list_head *new_anchor = list_del(anchor);
+   
+
+    list_add_tail(&e1.head, new_anchor);
+    list_add_tail(&e2.head, new_anchor);
+    list_add_tail(&e3.head, new_anchor);
+    list_add_tail(&e4.head, new_anchor);
+    list_add_tail(&e5.head, new_anchor);
+    list_add_tail(&e6.head, new_anchor);
+
+
+    current = new_anchor->next;
+
+
+    for (int i = 0; i < 6; i++) {
+        struct list_elem* elem = (struct list_elem*) current;
+        printf("%d\n", elem->pid);
+        assert(elem->pid == i);
         current = current->next;
     }
 
+
+    free(anchor);
+    //free(new_anchor);
     printf("success");
 
 }
