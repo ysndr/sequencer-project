@@ -4,7 +4,7 @@ TARGET=target
 
 BUILD=${TARGET}/build
 BIN=${TARGET}/bin
-# INCLUDE := ${SRC}/include
+INCLUDE := ${SRC}/include
 
 _LDFLAGS=${LDFLAGS}
 _CFLAGS=-g3 -O0 -Wall

@@ -8,7 +8,7 @@ int main(int argc, char const *argv[])
    int depth = atoi(argv[1]);
 
    int **table;
-   ALLOC_ARRAY2D(table, int, 12, 12, (0x00000000));
+   ALLOC_ARRAY2D(table, int, depth, depth, (0x00000000));
 
     table[0][0] = 1;
 
@@ -28,7 +28,3 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
-
-
-
-
