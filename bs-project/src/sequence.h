@@ -2,7 +2,7 @@
 #define SEQUENCE_H
 
 #define W_MATCH 2
-#define W_MISMATCH -2
+#define W_MISMATCH -1
 #define W_GAP -1
 
 #include <stdlib.h>

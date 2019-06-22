@@ -47,12 +47,12 @@ extern size_t get_difference(Sequence first, Sequence second) {
                 ? W_MATCH 
                 : W_MISMATCH);
             
-            int deletion = values[j] + W_GAP;
-            int insertion = ancestors_top[j+1] + W_GAP;
+            int insertion = values[j] + W_GAP;
+            int deletion = ancestors_top[j+1] + W_GAP;
 
             value = (matching > value) ? matching : value;
-            value = (deletion > value) ? deletion : value;
             value = (insertion > value) ? insertion : value;
+            value = (deletion > value) ? deletion : value;
 
             max = (value > max) ? value : max;
 
