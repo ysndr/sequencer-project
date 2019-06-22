@@ -67,6 +67,31 @@ extern size_t get_difference(Sequence first, Sequence second) {
     return max;
 }
 
+compare_one_to_all(Sequence seqA, Sequence hyperSeq) {
+
+    for (int comparison = 0;
+        comparison <= hyperSeq.length - seqA.length;
+        comparison++) {
+        size_t difference = get_difference(
+            seqA,
+            get_subsequence(comparison, seqA.length, hyperSeq));
+
+            // TODO: report
+
+    }
+}
+
+compare_all_to_all(Sequence hyperA, Sequence hyperB, size_t chunkSize) {
+    for (int start = 0; start <= hyperA.length - chunkSize; start++) {
+        size_t *differences = compare_one_to_all(
+            get_subsequence(start, chunkSize, hyperA),
+            hyperB
+        );
+    // TODO: report
+    }
+}
+
+
 extern void drop_sequence (Sequence seq) {
     free(seq.content);
 } 

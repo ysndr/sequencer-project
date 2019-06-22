@@ -10,16 +10,20 @@
 
 
 
-struct SequenceTag {
+typedef struct SequenceTag {
     char *content; 
     size_t length;
-};
-
-typedef struct SequenceTag Sequence;
+} Sequence;
 
 extern Sequence get_subsequence(size_t start, size_t size, Sequence seq);
-extern size_t get_difference(Sequence first, Sequence second);
 extern void drop_sequence (Sequence seq);
+
+typedef struct DifferenceTag {
+    size_t index;
+    size_t difference;
+} Difference;
+
+extern size_t get_difference(Sequence first, Sequence second);
 
 
 #endif
