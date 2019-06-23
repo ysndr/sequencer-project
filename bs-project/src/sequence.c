@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include "difference.h"
 #include "sequence.h"
 
 
@@ -14,7 +16,7 @@ extern Sequence get_subsequence(size_t start, size_t size, Sequence seq) {
     subseq.content = seq.content + start;
     subseq.length = size;
 
-    size_t overflow = start + size - seq.length; 
+    ssize_t overflow = start + size - seq.length; 
 
     if (overflow > 0) {
         subseq.length = size - overflow;
@@ -67,28 +69,62 @@ extern size_t get_difference(Sequence first, Sequence second) {
     return max;
 }
 
-compare_one_to_all(Sequence seqA, Sequence hyperSeq) {
+extern DifferenceList compare_one_to_all(
+    Sequence seqA,
+    Sequence hyperSeq,
+    size_t index_a) {
 
+    size_t total_comparisons = hyperSeq.length - seqA.length;
+
+    DifferenceList list;
+    list.differences = malloc(sizeof(Difference) * total_comparisons);
+    list.length = 0;
+
+    // compare to all frames of seqB
     for (int comparison = 0;
-        comparison <= hyperSeq.length - seqA.length;
+        comparison <= total_comparisons;
         comparison++) {
         size_t difference = get_difference(
             seqA,
             get_subsequence(comparison, seqA.length, hyperSeq));
-
-            // TODO: report
-
+        
+        // add to list if difference above threshold
+        if (difference >= MIN_DIFF) {
+            Difference diff_s;
+            diff_s.difference = difference;
+            diff_s.index_b = comparison;
+            diff_s.index_a = index_a;
+            list.differences[list.length] = diff_s;
+            list.length++;
+        }
     }
+    return list;
 }
 
-compare_all_to_all(Sequence hyperA, Sequence hyperB, size_t chunkSize) {
+extern DifferenceList compare_all_to_all(
+    Sequence hyperA,
+    Sequence hyperB, 
+    size_t start_a_global, 
+    size_t chunkSize) {
+    
+    DifferenceList list;
+    list.length = 0;
+
+
     for (int start = 0; start <= hyperA.length - chunkSize; start++) {
-        size_t *differences = compare_one_to_all(
+        DifferenceList differences = compare_one_to_all(
             get_subsequence(start, chunkSize, hyperA),
-            hyperB
+            hyperB,
+            start_a_global + start
         );
-    // TODO: report
+        
+        DifferenceList new_list = concat_diff_lists(list, differences);
+        drop_diff_list(list);
+        drop_diff_list(differences);
+        list = new_list;
     }
+
+    return list;
 }
 
 

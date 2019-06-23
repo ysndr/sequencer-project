@@ -2,14 +2,14 @@
 
 CC = gcc
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
-CFLAGS = -Wall -g 
+CFLAGS = -Wall -g -O0
 INCLUDES = -I./include
 
 
 
 LD = ld
 LFLAGS = 
-LIBS = 
+LIBS = -pthread
 
 SRCDIR = ./src
 DEPDIR = ./include
