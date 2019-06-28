@@ -7,7 +7,7 @@
 
 #define MIN_DIFF 70
 
-
+#include <pthread.h>
 #include <stdlib.h>
 #include "difference.h"
 
@@ -34,5 +34,7 @@ extern DifferenceList compare_all_to_all(
     Sequence hyperB, 
     size_t start_a_global, 
     size_t chunkSize);
+
+
 
 #endif

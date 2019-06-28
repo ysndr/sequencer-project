@@ -32,6 +32,14 @@ extern DifferenceList empty_diff_list() {
     return list;
 }
 
+extern DifferenceList one_element_list(Difference difference) {
+    DifferenceList list;
+    list.differences = malloc(sizeof(Difference) *1);
+    list.differences[0] = difference;
+    list.length = 1;
+    return list;
+}
+
 extern void drop_diff_list(DifferenceList list) {
     if (list.differences != NULL) free(list.differences);
 }
@@ -53,5 +61,5 @@ extern void print_diff_list(DifferenceList list) {
         print_diff(list.differences[i]);
         puts(",");
     }
-    printf("]");
+    printf("]\n");
 }

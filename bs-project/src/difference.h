@@ -22,6 +22,7 @@ typedef struct {
 extern DifferenceList concat_diff_lists(DifferenceList first, DifferenceList other);
 
 extern DifferenceList empty_diff_list();
+extern DifferenceList one_element_list(Difference difference);
 
 extern void drop_diff_list(DifferenceList list);
 extern void drop_diff_list_ref(DifferenceList *list);

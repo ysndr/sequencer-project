@@ -46,7 +46,7 @@ extern Sequence parse_sequence(char *content) {
         orig = orig + good_len + bad_len;
         dest = dest + good_len;
 
-    } while (good_len != 0 && bad_len != 0);
+    } while (good_len != 0 || bad_len != 0);
 
     Sequence seq;
     seq.content = content;

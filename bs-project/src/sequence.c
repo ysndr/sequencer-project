@@ -16,7 +16,7 @@ extern Sequence get_subsequence(size_t start, size_t size, Sequence seq) {
     subseq.content = seq.content + start;
     subseq.length = size;
 
-    ssize_t overflow = start + size - seq.length; 
+    ssize_t overflow = start + size - seq.length;
 
     if (overflow > 0) {
         subseq.length = size - overflow;
@@ -37,18 +37,18 @@ extern size_t get_difference(Sequence first, Sequence second) {
         ancestors_top[j] = 0;
     }
 
-    
+
     for (int i = 0; i < first.length; i++) {
-        
+
         for (int j = 0; j < second.length; j++) {
 
             int value = 0;
 
             int matching = ancestors_top[j]
-                + ((first.content[i] == second.content[j]) 
-                ? W_MATCH 
+                + ((first.content[i] == second.content[j])
+                ? W_MATCH
                 : W_MISMATCH);
-            
+
             int insertion = values[j] + W_GAP;
             int deletion = ancestors_top[j+1] + W_GAP;
 
@@ -57,6 +57,11 @@ extern size_t get_difference(Sequence first, Sequence second) {
             value = (deletion > value) ? deletion : value;
 
             max = (value > max) ? value : max;
+
+            // early return if its not possible to get an
+            //if ((max + ((second.length - j < first.length -i) ? second.length -j : first.length -i) * W_MATCH) < MIN_DIFF) {
+            //    return 0;
+            //}
 
             values[j+1] = value;
         }
@@ -82,12 +87,12 @@ extern DifferenceList compare_one_to_all(
 
     // compare to all frames of seqB
     for (int comparison = 0;
-        comparison <= total_comparisons;
+        comparison < total_comparisons;
         comparison++) {
         size_t difference = get_difference(
             seqA,
             get_subsequence(comparison, seqA.length, hyperSeq));
-        
+
         // add to list if difference above threshold
         if (difference >= MIN_DIFF) {
             Difference diff_s;
@@ -98,26 +103,29 @@ extern DifferenceList compare_one_to_all(
             list.length++;
         }
     }
+
+
+
     return list;
 }
 
 extern DifferenceList compare_all_to_all(
     Sequence hyperA,
-    Sequence hyperB, 
-    size_t start_a_global, 
+    Sequence hyperB,
+    size_t start_a_global,
     size_t chunkSize) {
-    
+
     DifferenceList list;
     list.length = 0;
 
 
-    for (int start = 0; start <= hyperA.length - chunkSize; start++) {
+    for (int start = 0; start < hyperA.length - chunkSize; start++) {
         DifferenceList differences = compare_one_to_all(
             get_subsequence(start, chunkSize, hyperA),
             hyperB,
             start_a_global + start
         );
-        
+
         DifferenceList new_list = concat_diff_lists(list, differences);
         drop_diff_list(list);
         drop_diff_list(differences);
@@ -128,6 +136,7 @@ extern DifferenceList compare_all_to_all(
 }
 
 
+
 extern void drop_sequence (Sequence seq) {
     free(seq.content);
-} 
+}
