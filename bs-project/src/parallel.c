@@ -23,9 +23,7 @@ void *compare_fn(void *arg) {
         context->start,
         CHUNK_SIZE
     );
-
     printf("chunk with start %d, returns with %ld\n", context->start, list->length);
-
     return list;
 
     #else
@@ -68,14 +66,14 @@ void *compare_fn(void *arg) {
 
 }
 extern DifferenceList parallel_compare(
-    Sequence seqA, Sequence SeqB, size_t nthreads) {
+    Sequence s_frame, Sequence s_compare, size_t nthreads) {
 
     pthread_t threads[nthreads];
     ThreadContext contexts[nthreads];
 
     DifferenceList returnList = empty_diff_list();
 
-    size_t hyper_a_size = seqA.length / nthreads;
+    size_t hyper_a_size = s_frame.length / nthreads;
 
     Result result_sink;
     result_sink.type = IDLE;
@@ -92,23 +90,25 @@ extern DifferenceList parallel_compare(
 
         // expand last one by so much that have been ignored before
         // due to integer rounding
-        if (slot == nthreads -1 && nthreads * hyper_a_size < seqA.length) {
-            hyper_a_size += (seqA.length - nthreads * hyper_a_size);
+        if (slot == nthreads -1 && nthreads * hyper_a_size < s_frame.length) {
+            puts("only one");
+            hyper_a_size += (s_frame.length - nthreads * hyper_a_size);
         }
-        else {
-            hyper_a_size += 49;
+        else if (slot < nthreads -1) {
+            hyper_a_size += CHUNK_SIZE -1;
         }
 
         // create chunk
         Sequence hyper_a = get_subsequence(
             start,
             hyper_a_size,
-            seqA);
+            s_frame);
 
+        puts("here");
         ThreadContext context;
 
         context.hyperA = hyper_a;
-        context.hyperB = SeqB;
+        context.hyperB = s_compare;
         context.start = start;
         context.thread_id = slot;
         context.lock = &lock;

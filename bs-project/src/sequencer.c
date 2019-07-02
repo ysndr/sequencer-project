@@ -20,18 +20,18 @@ int main(int argc, char *argv[]) {
     printf("will create %ld threads\n", nthreads);
 
 
-    Sequence seqA = parse_sequence(first_file_content);
-    Sequence seqB = parse_sequence(second_file_content);
+    Sequence frame = parse_sequence(first_file_content);
+    Sequence compare = parse_sequence(second_file_content);
 
-    printf("first sequence: \t%ld elements\n", seqA.length);
-    printf("second sequence: \t%ld elements\n", seqB.length);
+    printf("first sequence: \t%ld elements\n", frame.length);
+    printf("second sequence: \t%ld elements\n", compare.length);
 
-    if (seqA.length < seqB.length) {
+    if (frame.length < compare.length) {
         fprintf(stderr, "WARNING: First sequence should be the larger of both");
         return 2;
     }
 
-    DifferenceList result = parallel_compare(seqA, seqB, nthreads);
+    DifferenceList result = parallel_compare(frame, compare, nthreads);
 
     print_diff_list(result);
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 
     fclose(output_file);
     drop_diff_list(result);
-    drop_sequence(seqA);
-    drop_sequence(seqB);
+    drop_sequence(frame);
+    drop_sequence(compare);
 
 }

@@ -73,13 +73,17 @@ extern size_t get_difference(Sequence first, Sequence second) {
 
     return max;
 }
-
+/**
+ * slides a window `s_window` of bases over another global series `s_global`
+ * compares the window to an equally sized chunk on the global series
+ * the results of all comparisons are written to a DifferenceList and returned
+ */
 extern DifferenceList compare_one_to_all(
-    Sequence seqA,
-    Sequence hyperSeq,
-    size_t index_a) {
+    Sequence s_window,
+    Sequence s_global,
+    size_t index_window) {
 
-    size_t total_comparisons = hyperSeq.length - seqA.length;
+    size_t total_comparisons = s_global.length - s_window.length;
 
     DifferenceList list;
     list.differences = malloc(sizeof(Difference) * total_comparisons);
@@ -90,40 +94,43 @@ extern DifferenceList compare_one_to_all(
         comparison < total_comparisons;
         comparison++) {
         size_t difference = get_difference(
-            seqA,
-            get_subsequence(comparison, seqA.length, hyperSeq));
+            s_window,
+            get_subsequence(comparison, s_window.length, s_global));
 
         // add to list if difference above threshold
         if (difference >= MIN_DIFF) {
             Difference diff_s;
             diff_s.difference = difference;
             diff_s.index_b = comparison;
-            diff_s.index_a = index_a;
+            diff_s.index_a = index_window;
             list.differences[list.length] = diff_s;
             list.length++;
         }
     }
 
-
-
     return list;
 }
 
+
+/**
+ * slides a window across a frame thereby using each window
+ * to compare to the other global series base by base 
+ */
 extern DifferenceList compare_all_to_all(
-    Sequence hyperA,
-    Sequence hyperB,
-    size_t start_a_global,
-    size_t chunkSize) {
+    Sequence s_frame,
+    Sequence s_global,
+    size_t start_frame_global,
+    size_t chunk_size) {
 
     DifferenceList list;
     list.length = 0;
 
 
-    for (int start = 0; start < hyperA.length - chunkSize; start++) {
+    for (int start = 0; start < s_frame.length - chunk_size; start++) {
         DifferenceList differences = compare_one_to_all(
-            get_subsequence(start, chunkSize, hyperA),
-            hyperB,
-            start_a_global + start
+            get_subsequence(start, chunk_size, s_frame),
+            s_global,
+            start_frame_global + start
         );
 
         DifferenceList new_list = concat_diff_lists(list, differences);
