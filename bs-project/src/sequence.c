@@ -41,6 +41,11 @@ extern size_t get_difference(Sequence first, Sequence second) {
     for (int i = 0; i < first.length; i++) {
 
         for (int j = 0; j < second.length; j++) {
+            // early return if its not possible to get a difference above Threshold
+            size_t max_diag = (second.length - j < first.length -i) ? (first.length -i) : (second.length -j);
+            if ((max + W_MATCH * ( max_diag ) ) < MIN_DIFF) {
+               return 0;
+            }
 
             int value = 0;
 
@@ -58,10 +63,6 @@ extern size_t get_difference(Sequence first, Sequence second) {
 
             max = (value > max) ? value : max;
 
-            // early return if its not possible to get an
-            //if ((max + ((second.length - j < first.length -i) ? second.length -j : first.length -i) * W_MATCH) < MIN_DIFF) {
-            //    return 0;
-            //}
 
             values[j+1] = value;
         }
@@ -114,7 +115,7 @@ extern DifferenceList compare_one_to_all(
 
 /**
  * slides a window across a frame thereby using each window
- * to compare to the other global series base by base 
+ * to compare to the other global series base by base
  */
 extern DifferenceList compare_all_to_all(
     Sequence s_frame,

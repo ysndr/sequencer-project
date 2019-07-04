@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 
     DifferenceList result = parallel_compare(frame, compare, nthreads);
 
-    print_diff_list(result);
+    //print_diff_list(result);
 
     printf("Writing results..");
     fprintf(output_file, "a\t b\t distance\n");
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
          result.differences[i].index_b,
          result.differences[i].difference);
     };
-    printf("\rWrote results!\n");
+    printf("\33[2K\rdone!\n");
 
     fclose(output_file);
     drop_diff_list(result);
