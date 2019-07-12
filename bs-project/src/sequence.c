@@ -84,7 +84,7 @@ extern DifferenceList compare_one_to_all(
     Sequence s_global,
     size_t index_window) {
 
-    size_t total_comparisons = s_global.length - s_window.length;
+    int total_comparisons = s_global.length - s_window.length;
 
     DifferenceList list;
     list.differences = malloc(sizeof(Difference) * total_comparisons);

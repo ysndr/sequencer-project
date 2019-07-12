@@ -8,7 +8,11 @@
 
 
 extern char *read_file(char *path) {
-    FILE *f = fopen(path, "r");
+    FILE *f;
+    if ((f = fopen(path, "r")) == NULL) {
+        printf("%s could not be opened!", path);
+        exit(1);
+    }
     
     fseek(f, 0, SEEK_END);
     long items = ftell(f); // last index + 1 for this index' content
@@ -16,7 +20,9 @@ extern char *read_file(char *path) {
       
     char *buf = malloc(items * sizeof(char) +1);
     
-    fread(buf, 1, items, f);
+    fread(buf, sizeof(char), items, f);
+
+    fclose(f);
     
     return buf;
 }

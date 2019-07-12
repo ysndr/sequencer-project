@@ -5,8 +5,7 @@
 #define W_MISMATCH -1
 #define W_GAP -1
 
-#define MIN_DIFF 70
-
+#define MIN_DIFF 71
 #include <pthread.h>
 #include <stdlib.h>
 #include "difference.h"
@@ -14,7 +13,7 @@
 
 
 typedef struct {
-    char *content; 
+    char *content;
     size_t length;
 } Sequence;
 
@@ -31,8 +30,8 @@ extern DifferenceList compare_one_to_all(
 
 extern DifferenceList compare_all_to_all(
     Sequence hyperA,
-    Sequence hyperB, 
-    size_t start_a_global, 
+    Sequence hyperB,
+    size_t start_a_global,
     size_t chunkSize);
 
 

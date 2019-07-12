@@ -37,23 +37,29 @@ void *compare_fn(void *arg) {
     for (int start = 0; start < chunks; start++) {
 
         count++;
+
+
         DifferenceList differences = compare_one_to_all(
             get_subsequence(start, CHUNK_SIZE, context->hyperA),
             context->hyperB,
             context->start + start
         );
 
+        if (differences.length == 0) {
+            drop_diff_list(differences);
+            continue;
+        }
         pthread_mutex_lock( context->lock );
+        // printf("locked: %ld", context->thread_id);
 
         context->result_sink->type = THREAD_DATA;
         context->result_sink->differences = differences;
         context->result_sink->thread_id = context->thread_id;
 
         //printf( "\33[2K\r[thread %ld] processed %d/%d chunks! Signalling...", context->thread_id, start+1, chunks);
+        // printf("signal: %ld", context->thread_id);
 
         pthread_cond_signal(context->signal);
-            printf("sent %d\n", start);
-
         pthread_mutex_unlock(context->lock);
     }
 
@@ -87,10 +93,6 @@ extern DifferenceList parallel_compare(
 
     pthread_mutex_lock( &lock );
 
-
-    size_t total_chunks = 0;
-    size_t processed_chunks = 1; // 1 because print does always occure before it processes
-
     for (size_t slot = 0; slot < nthreads; slot++) {
         size_t hyper_a_size = s_frame.length / nthreads;
 
@@ -105,8 +107,6 @@ extern DifferenceList parallel_compare(
         else if (slot < nthreads -1) {
             hyper_a_size += (CHUNK_SIZE -1);
         }
-
-        total_chunks += hyper_a_size - (CHUNK_SIZE -1);
 
         // create chunk with extended size from global frame sequence
         Sequence hyper_a = get_subsequence(
@@ -135,9 +135,7 @@ extern DifferenceList parallel_compare(
     DifferenceList* thread_results[nthreads];
 
     for (int i = 0; i < nthreads; i++) {
-        DifferenceList l;
-
-	printf("\33[2K\r[compare] waiting for thread %d to end", i);
+	printf("\33[2K\r[compare] waiting for thread %d to end\n", i);
 
         pthread_join(threads[i], (void**) &thread_results[i]);
         printf("\33[2K\r[compare] thread %d joined with length %ld\n", i, thread_results[i]->length);
@@ -160,50 +158,46 @@ extern DifferenceList parallel_compare(
 
     size_t running = nthreads;
 
-    while(running > 0) {
-        result_sink.type = IDLE;
+    size_t received = 0;
 
-        printf("\n\033[A\33[2K\r[compare] (%ld/%ld | %ld/%ld) ",
-            processed_chunks, total_chunks,
+    while(running > 0) {
+        
+        Result result;
+
+        printf("\033[A\33[2K\r[compare] (%ld/%ld) ",
             running, nthreads);
 
         while(result_sink.type == IDLE) {
             pthread_cond_wait(&signal, &lock);
+            result = result_sink;
         }
-
-        printf("received\n");
+        
+        result_sink.type = IDLE;
 
         // result changed
-        if(result_sink.type == THREAD_END) {
-            printf("Thread %ld ended", result_sink.thread_id);
+        if(result.type == THREAD_END) {
+            printf("Thread %ld ended", result.thread_id);
             running--;
             continue;
         }
 
-        // printf("%d\n", result_sink.type);
+        size_t dots = received % 4;
+        received++;
 
-        if(result_sink.type == THREAD_DATA) {
+        char *spinner = "\\|/-";
 
-            processed_chunks += 1;
 
-            //printf("Receiving data from thread %ld", result_sink.thread_id);
-        }
-
-        if(result_sink.differences.length == 0) {
-            //printf("No significant differences, skipping post-processing");
-            continue;
-        }
-
-        printf(" ... post-processing");
+        putchar(spinner[dots]);
+        
 
         Difference max;
         max.difference = 0;
 
-        for (int d = 0; d < result_sink.differences.length; d++) {
+        for (int d = 0; d < result.differences.length; d++) {
 
             // ouch :D
-            if(result_sink.differences.differences[d].difference > max.difference) {
-                max = result_sink.differences.differences[d];
+            if(result.differences.differences[d].difference > max.difference) {
+                max = result.differences.differences[d];
             }
         }
 
@@ -215,7 +209,7 @@ extern DifferenceList parallel_compare(
         drop_diff_list(element);
         returnList = list;
     }
-    printf("\n\n");
+    printf("\n");
     pthread_mutex_unlock(&lock);
 
     #endif
