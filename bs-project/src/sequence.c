@@ -124,6 +124,7 @@ extern DifferenceList compare_all_to_all(
     size_t chunk_size) {
 
     DifferenceList list;
+    list.differences = NULL;
     list.length = 0;
 
 

@@ -15,7 +15,7 @@ void *compare_fn(void *arg) {
 
     #ifdef NO_POSTPROC
 
-    DifferenceList *list = malloc(sizeof(DifferenceList));
+    DifferenceList *list = calloc(1, sizeof(DifferenceList));
 
     *list = compare_all_to_all(
         context->hyperA,
@@ -146,7 +146,7 @@ extern DifferenceList parallel_compare(
         DifferenceList list = concat_diff_lists(returnList, *thread_results[i]);
 
         drop_diff_list(returnList);
-        drop_diff_list(*thread_results[i]);
+        drop_diff_list(*(thread_results[i]));
 
         returnList = list;
     }
