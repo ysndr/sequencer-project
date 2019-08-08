@@ -1,7 +1,7 @@
 # inspired by https://www.cs.swarthmore.edu/~newhall/unixhelp/howto_makefiles.html
 
 CC = gcc
-CFLAGS = -Wall -g
+CFLAGS = -Wall 
 CFEATURES =
 INCLUDES = -I./include
 

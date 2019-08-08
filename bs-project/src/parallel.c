@@ -164,8 +164,11 @@ extern DifferenceList parallel_compare(
         
         Result result;
 
-        printf("\033[A\33[2K\r[compare] (%ld/%ld) ",
-            running, nthreads);
+        char *spinner = "\\|/-";
+
+        printf("\n\033[A\33[2K\r[compare] (%ld/%ld) %c",
+            running, nthreads, spinner[received % 4]);
+        fflush(stdout);
 
         while(result_sink.type == IDLE) {
             pthread_cond_wait(&signal, &lock);
@@ -181,13 +184,9 @@ extern DifferenceList parallel_compare(
             continue;
         }
 
-        size_t dots = received % 4;
         received++;
 
-        char *spinner = "\\|/-";
-
-
-        putchar(spinner[dots]);
+       
         
 
         Difference max;
@@ -209,7 +208,6 @@ extern DifferenceList parallel_compare(
         drop_diff_list(element);
         returnList = list;
     }
-    printf("\n");
     pthread_mutex_unlock(&lock);
 
     #endif

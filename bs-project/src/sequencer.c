@@ -36,9 +36,9 @@ int main(int argc, char *argv[]) {
     //print_diff_list(result);
 
     printf("Writing results..");
-    fprintf(output_file, "a\t b\t distance\n");
+    fprintf(output_file, "a\tb\tdistance\n");
     for (int i = 0; i < result.length; i++) {
-        fprintf(output_file, "%ld\t %ld\t %ld\n",
+        fprintf(output_file, "%ld\t%ld\t%ld\n",
          result.differences[i].index_a,
          result.differences[i].index_b,
          result.differences[i].difference);
