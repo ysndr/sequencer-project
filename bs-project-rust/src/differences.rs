@@ -68,33 +68,39 @@ impl<'a> Sequence<'a> {
         let mut max: usize = 0;
 
         for (i, first_char) in self.items.chars().enumerate() {
-            for (j, other_char) in other.items.chars().enumerate() {
-                let max_diag: isize = if other.len() - j < self.len() - i {
-                    (self.len() - i) as isize
-                } else {
-                    (other.len() - j) as isize
-                };
+            for (j, (other_char, history)) in other.items.chars()
+                .zip(ancestors_top.windows(2))
+                .enumerate() {
+                
+                let max_diag = (other.len() - j).max(self.len() - i);
 
-                 if max as isize + config.W_MATCH * max_diag < config.MIN_DIFF as isize {
+                if max + config.W_MATCH as usize * max_diag < config.MIN_DIFF {
                      return 0;
                 }
 
-                unsafe {
-                    let matching: isize = *ancestors_top.get_unchecked(j) as isize
-                    + if first_char == other_char {
-                        config.W_MATCH
-                    } else {
-                        config.W_MISMATCH
-                    };
-                
-                    let insertion = *values.get_unchecked(j) as isize + config.W_GAP;
-                    let deletion = *ancestors_top.get_unchecked(j + 1) as isize + config.W_GAP;
-                    let value: usize = 0.max(insertion).max(deletion).max(matching) as usize;
-                
-                    max = max.max(value);
+                let prev_h = values[j];
+                let [prev_d, prev_v] = match *history {
+                    [prev_d, prev_v] => [prev_d, prev_v],
+                    _  => panic!("pairs mismatch")
+                };
+                // let prev_d = ancestors_top[j];
+                // let prev_v = ancestors_top[j+1];
 
-                    values[j + 1] = value;
-                }
+                let matching: isize = prev_d as isize
+                + if first_char == other_char {
+                    config.W_MATCH
+                } else {
+                    config.W_MISMATCH
+                };
+            
+                let insertion = prev_h as isize + config.W_GAP;
+                let deletion = prev_v as isize + config.W_GAP;
+                let value: usize = 0.max(insertion).max(deletion).max(matching) as usize;
+            
+                max = max.max(value);
+
+                values[j + 1] = value;
+                
             }
             ancestors_top = values.clone();
         }
