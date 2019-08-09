@@ -79,18 +79,22 @@ impl<'a> Sequence<'a> {
                      return 0;
                 }
 
-                let matching: isize = ancestors_top[j] as isize
+                unsafe {
+                    let matching: isize = *ancestors_top.get_unchecked(j) as isize
                     + if first_char == other_char {
                         config.W_MATCH
                     } else {
                         config.W_MISMATCH
                     };
-                let insertion = values[j] as isize + config.W_GAP;
-                let deletion = ancestors_top[j + 1] as isize + config.W_GAP;
-                let value = 0.max(insertion).max(deletion).max(matching);
-                max = max.max(value as usize);
+                
+                    let insertion = *values.get_unchecked(j) as isize + config.W_GAP;
+                    let deletion = *ancestors_top.get_unchecked(j + 1) as isize + config.W_GAP;
+                    let value: usize = 0.max(insertion).max(deletion).max(matching) as usize;
+                
+                    max = max.max(value);
 
-                values[j + 1] = value as usize;
+                    values[j + 1] = value;
+                }
             }
             ancestors_top = values.clone();
         }
